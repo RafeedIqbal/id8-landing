@@ -10,7 +10,7 @@ export default function Footer() {
             terminal
           </span>
           <span className="text-white text-sm font-bold font-mono">
-            id<span className="text-[#00ff41]">8</span> © 2025
+            id<span className="text-[#00ff41]">8</span> © 2026
           </span>
         </div>
 
@@ -38,6 +38,14 @@ export default function Footer() {
             className="text-[#9abca2] hover:text-[#00ff41] transition-colors font-mono"
           >
             github →
+          </a>
+          <a
+            href="https://www.linkedin.com/in/rafeediqbal/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#9abca2] hover:text-[#00ff41] transition-colors font-mono"
+          >
+            linkedin →
           </a>
         </div>
 

@@ -1,14 +1,10 @@
+import DotGrid from './DotGrid';
+
 export default function Hero() {
   return (
     <section className="relative border-b border-[#273a2c] scanlines overflow-hidden">
-      {/* Dot grid background */}
-      <div
-        className="absolute inset-0 z-0 opacity-20 pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#00ff41 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }}
-      />
+      {/* Dot grid background (GSAP magnetic) */}
+      <DotGrid />
 
       <div className="w-full max-w-7xl mx-auto px-4 py-24 md:py-32 relative z-10 flex flex-col items-center text-center gap-8">
         {/* Badge */}
@@ -17,7 +13,7 @@ export default function Hero() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ff41] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ff41]" />
           </span>
-          v2.0 Now Available
+          open source on github
         </div>
 
         {/* Headline */}
