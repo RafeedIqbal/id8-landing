@@ -107,9 +107,14 @@ export default function Hero() {
               <span className="text-[#00ff41]">➜</span>
               <span className="text-white">
                 Live at:{' '}
-                <span className="text-blue-400 underline">
+                <a
+                  href="https://habitflow-16.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 underline transition-colors"
+                >
                   https://habitflow-16.vercel.app/
-                </span>
+                </a>
               </span>
             </div>
             <div className="flex gap-2">
