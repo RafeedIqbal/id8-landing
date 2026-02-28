@@ -18,7 +18,7 @@ export default function DotGrid() {
         const spacing = 32;
         const radius = 1;
 
-        let dots: { x: number; y: number; originX: number; originY: number }[] = [];
+        let dots: { x: number; y: number; originX: number; originY: number; scale: number; alpha: number }[] = [];
         let animationFrameId: number;
 
         const resize = () => {
@@ -36,7 +36,7 @@ export default function DotGrid() {
                 for (let j = 0; j < rows; j++) {
                     const x = i * spacing + offsetX;
                     const y = j * spacing + offsetY;
-                    dots.push({ x, y, originX: x, originY: y });
+                    dots.push({ x, y, originX: x, originY: y, scale: 1, alpha: 0.5 });
                 }
             }
         };
@@ -50,56 +50,17 @@ export default function DotGrid() {
         resize();
 
         const mouse = { x: -1000, y: -1000 };
+        let isHovering = false;
 
         const handleMouseMove = (e: MouseEvent) => {
             const rect = canvas.getBoundingClientRect();
             mouse.x = e.clientX - rect.left;
             mouse.y = e.clientY - rect.top;
-
-            const maxDistance = 150;
-            const magneticPull = 0.4;
-
-            dots.forEach((dot) => {
-                const dx = mouse.x - dot.originX;
-                const dy = mouse.y - dot.originY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < maxDistance) {
-                    const force = (maxDistance - distance) / maxDistance;
-                    const targetX = dot.originX + dx * force * magneticPull;
-                    const targetY = dot.originY + dy * force * magneticPull;
-
-                    gsap.to(dot, {
-                        x: targetX,
-                        y: targetY,
-                        duration: 0.4,
-                        ease: 'power2.out',
-                        overwrite: 'auto',
-                    });
-                } else {
-                    if (dot.x !== dot.originX || dot.y !== dot.originY) {
-                        gsap.to(dot, {
-                            x: dot.originX,
-                            y: dot.originY,
-                            duration: 0.8,
-                            ease: 'elastic.out(1, 0.3)',
-                            overwrite: 'auto',
-                        });
-                    }
-                }
-            });
+            isHovering = true;
         };
 
         const handleMouseLeave = () => {
-            dots.forEach((dot) => {
-                gsap.to(dot, {
-                    x: dot.originX,
-                    y: dot.originY,
-                    duration: 0.8,
-                    ease: 'elastic.out(1, 0.3)',
-                    overwrite: 'auto',
-                });
-            });
+            isHovering = false;
         };
 
         window.addEventListener('mousemove', handleMouseMove);
@@ -107,17 +68,73 @@ export default function DotGrid() {
 
         const render = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#00ff41';
+
+            const maxDistance = 200;
+            const magneticPull = 0.6; // Stronger pull
 
             dots.forEach((dot) => {
+                if (isHovering) {
+                    const dx = mouse.x - dot.originX;
+                    const dy = mouse.y - dot.originY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < maxDistance) {
+                        const force = Math.pow((maxDistance - distance) / maxDistance, 2); // Exponetial falloff for smoother easing
+                        const targetX = dot.originX + dx * force * magneticPull;
+                        const targetY = dot.originY + dy * force * magneticPull;
+
+                        // Dynamic glow/scale based on how close the mouse is
+                        const targetScale = 1 + force * 2.5;
+                        const targetAlpha = 0.5 + force * 0.5;
+
+                        gsap.to(dot, {
+                            x: targetX,
+                            y: targetY,
+                            scale: targetScale,
+                            alpha: targetAlpha,
+                            duration: 0.6,
+                            ease: 'power3.out',
+                            overwrite: 'auto',
+                        });
+                    } else {
+                        resetDot(dot);
+                    }
+                } else {
+                    resetDot(dot);
+                }
+
                 ctx.beginPath();
-                // The previous CSS gradient used 1px dots
-                ctx.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 65, ${dot.alpha})`;
+
+                // Add glow effect if the dot is being pulled
+                if (dot.scale > 1.1) {
+                    ctx.shadowBlur = 15 * (dot.scale - 1);
+                    ctx.shadowColor = '#00ff41';
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+
+                ctx.arc(dot.x, dot.y, radius * dot.scale, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.shadowBlur = 0; // Reset for performance on unused dots
             });
 
             animationFrameId = requestAnimationFrame(render);
         };
+
+        const resetDot = (dot: any) => {
+            if (dot.x !== dot.originX || dot.y !== dot.originY || dot.scale !== 1 || dot.alpha !== 0.5) {
+                gsap.to(dot, {
+                    x: dot.originX,
+                    y: dot.originY,
+                    scale: 1,
+                    alpha: 0.5,
+                    duration: 1.2,
+                    ease: 'elastic.out(1, 0.4)', // Smoother spring back
+                    overwrite: 'auto',
+                });
+            }
+        }
 
         render();
 
@@ -133,7 +150,7 @@ export default function DotGrid() {
     return (
         <canvas
             ref={canvasRef}
-            className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+            className="absolute inset-0 z-0 opacity-40 pointer-events-none"
         />
     );
 }

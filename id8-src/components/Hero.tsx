@@ -1,14 +1,41 @@
+'use client';
+
+import { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import DotGrid from './DotGrid';
 
 export default function Hero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Initial state setup for elements to pull from
+    gsap.set('.hero-anim-element', {
+      y: 30,
+      opacity: 0,
+      scale: 0.95
+    });
+
+    // Staggered animation
+    gsap.to('.hero-anim-element', {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'back.out(1.2)',
+      delay: 0.1 // Slight delay to ensure paint
+    });
+  }, { scope: containerRef });
+
   return (
-    <section className="relative border-b border-[#273a2c] scanlines overflow-hidden">
+    <section className="relative border-b border-[#273a2c] scanlines overflow-hidden" ref={containerRef}>
       {/* Dot grid background (GSAP magnetic) */}
       <DotGrid />
 
       <div className="w-full max-w-7xl mx-auto px-4 py-24 md:py-32 relative z-10 flex flex-col items-center text-center gap-8">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#00ff41]/30 bg-[#00ff41]/5 text-[#00ff41] text-xs font-bold uppercase tracking-wider">
+        <div className="hero-anim-element inline-flex items-center gap-2 px-3 py-1 border border-[#00ff41]/30 bg-[#00ff41]/5 text-[#00ff41] text-xs font-bold uppercase tracking-wider">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ff41] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ff41]" />
@@ -17,20 +44,20 @@ export default function Hero() {
         </div>
 
         {/* Headline */}
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tight max-w-4xl leading-tight">
+        <h1 className="hero-anim-element text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tight max-w-4xl leading-tight">
           &gt; id8: Idea to deploy
           <br className="hidden md:block" />
           in minutes
           <span className="cursor-blink" />
         </h1>
 
-        <p className="text-[#9abca2] text-lg md:text-xl max-w-2xl leading-relaxed">
+        <p className="hero-anim-element text-[#9abca2] text-lg md:text-xl max-w-2xl leading-relaxed">
           AI-assisted full-stack building. Generate production-ready code with a single prompt.
           Stop configuring. Start shipping.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full justify-center">
+        <div className="hero-anim-element flex flex-col sm:flex-row gap-4 mt-4 w-full justify-center">
           <a
             href="https://github.com/RafeedIqbal/id8-scripts"
             target="_blank"
@@ -53,7 +80,7 @@ export default function Hero() {
 
         {/* Terminal window demo */}
         <div
-          className="mt-12 p-4 border border-[#273a2c] bg-black w-full max-w-3xl"
+          className="hero-anim-element mt-12 p-4 border border-[#273a2c] bg-black w-full max-w-3xl"
           style={{ boxShadow: '0 0 40px rgba(0, 255, 65, 0.05)' }}
         >
           <div className="flex items-center gap-2 mb-4 px-2">
@@ -65,7 +92,7 @@ export default function Hero() {
           <div className="text-left font-mono text-sm md:text-base space-y-2 p-2 overflow-x-auto">
             <div className="flex gap-2">
               <span className="text-[#00ff41]">$</span>
-              <span className="text-white">id8 new &quot;SaaS for dog walkers with Stripe&quot;</span>
+              <span className="text-white">id8 a habit tracking app focused on consistency</span>
             </div>
             <div className="text-[#9abca2] pl-4 space-y-1">
               <div>&gt; Analyzing requirements... <span className="text-[#00ff41]">Done</span></div>
@@ -81,7 +108,7 @@ export default function Hero() {
               <span className="text-white">
                 Live at:{' '}
                 <span className="text-blue-400 underline">
-                  https://dog-walkers-app.vercel.app
+                  https://habitflow-16.vercel.app/
                 </span>
               </span>
             </div>
