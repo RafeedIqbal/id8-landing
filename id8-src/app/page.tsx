@@ -15,7 +15,7 @@ export default function Home() {
       <AnimatedSection><WhatIsId8 /></AnimatedSection>
       <AnimatedSection><HowItWorks /></AnimatedSection>
       <AnimatedSection><Waitlist /></AnimatedSection>
-      <AnimatedSection><Footer /></AnimatedSection>
+      <Footer />
     </main>
   )
 }
